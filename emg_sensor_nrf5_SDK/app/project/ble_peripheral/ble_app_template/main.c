@@ -198,7 +198,7 @@ uint32_t app_time;                                                              
 int16_t emg_value;                                                                  /**< Current raw ECG/EMG sample from AFE. */  
 int16_t imu[9];                                                                     /**< IMU data. */
 uint8_t imu_size = 0;                                                               /**< Count of valid IMU data. */
- uint8_t imu_flags = 0;
+uint8_t imu_flags = 0;
 
 // for IMU sensor
 uint8_t msec = 0;                                                                 /**< Millisecond counter synchronyzed to AFE interrupts. */
@@ -437,27 +437,16 @@ void reset_freq_dom_features(void){
 
 }
 
-  
 
-
- static bool_t activate_transmit = false;
-
-// custom nhrs ecg, emg
-//static uint8_t hrm_initial_valuex [] = {100, 120, 150, 78, 34,    123, 78, 77, 85, 94,    100, 79, 45, 90, 123,    1,4, 6, 7, 9,   12, 34, 56, 24, 7 };
 static uint8_t hrm_initial_value [32];
 
-// a structure to contain time domain features
+// a redundant structure
 typedef struct {
-  uint8_t emg_val[5];/*
-  uint8_t emg_intg;
-  uint8_t emg_ssi;
-  uint8_t emg_vrn;
-  uint8_t emg_rms;
-  uint8_t mean_freq;
-  uint8_t med_freq;
-  uint8_t peak_freq;
-  uint8_t pow_freq;*/
+  uint8_t ble_vals[32];
 }ble_buf_t;
+
+// keep a copy of immediately sent packet
+ble_buf_t ble_dbl_buf;
 
 
 
@@ -472,12 +461,11 @@ static void ble_trnsmt(void){
    {
       data[0] = i+1;
       data[1] = hrm_initial_value[i];
-     // err_code = ble_nhrs_send(&m_nhrs, data, &len);
-      //err_code = ble_nhrs_send(&m_nhrs, &hrm_initial_value[i], &len);
-      err_code = ble_nhrs_send(&m_nhrs, &hrm_initial_value[i], &len);
-      //err_code = ble_nhrs_send(&m_nhrs, (uint8_t *)(buff->emg_val[i]), &len);
-   }
 
+      // redundancy in data transmission
+      ble_dbl_buf.ble_vals[i] = hrm_initial_value[i];
+      err_code = ble_nhrs_send(&m_nhrs, &hrm_initial_value[i], &len);
+   }
 }
 
 
@@ -504,7 +492,6 @@ void calc_time_dom(void){
     emg_mean_absolute_value = emg_integrated / EMG_SIGNAL_SIZE;
     emg_variance = emg_ssi / (EMG_SIGNAL_SIZE - 1);
     emg_rms = sqrt(emg_ssi / EMG_SIGNAL_SIZE);
-
 }
 
 
@@ -523,6 +510,7 @@ void calc_freq_dom(void){
     peakfrequ = peakfreq(vector, emg_array_out_index_init, samplerate);
     totalpower = powe(vector,emg_array_out_index_init);
 
+    show_freq_dom();
 }
 
 
@@ -641,12 +629,9 @@ void sample_imu(uint8_t * msec){
             } 
             mscl_activator(imu, &mscl_act);
 
- 
-
             //imu_show(imu);
 
           } // get data from IMU
-
 
         } // sample IMU at 50 Hz = 1/20 sps
 
@@ -655,6 +640,17 @@ void sample_imu(uint8_t * msec){
       // decrease semaphore 
 }
 
+
+void reset_index(void){
+   if (emg_array_out_index >= EMG_SIGNAL_SIZE){
+      emg_array_out_index = 0;
+   }
+}
+
+void signals_to_csv(FILE *dev_file){
+  // write raw signals to  file
+  fprintf(dev_file, "%d\n", emg_value);
+}
 
 
 /* Function definitions ----------------------------------------------- */
@@ -715,8 +711,7 @@ int main(void) {
             // pass raw value to moving average func
             emg_mvn_avg(&emg_value_raw);
 
-            // write raw signals to  file
-            //fprintf(dev_file, "%d\n", emg_value);
+            //signals_to_csv(dev_file);
 
             //start calculations if buffer is filled
             if(emg_array_out_index == EMG_SIGNAL_SIZE){
@@ -726,9 +721,7 @@ int main(void) {
             } 
 
             // reset array out index
-            if (emg_array_out_index >= EMG_SIGNAL_SIZE) 
-              emg_array_out_index = 0;
-
+            reset_index();
             sample_imu(&msec);
         }
 
