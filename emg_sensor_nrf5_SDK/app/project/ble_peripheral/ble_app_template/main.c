@@ -596,6 +596,19 @@ void emg_mvn_avg(float * emg_value_raw){
 
 }
 
+void enqueue(uint8_t ndx){
+  ret_code_t err_code;
+  uint8_t data[2];
+  uint16_t len = sizeof(data);
+  uint8_t new_ndx = ndx;
+   for(uint8_t i = new_ndx; i < 19; i++)
+   {
+      data[0] = i+1;
+      data[1] = hrm_initial_value[i];
+      //err_code = ble_nhrs_send(&m_nhrs, &hrm_initial_value[i], &len);
+   }
+}
+
 
 void sample_imu(uint8_t * msec){
         if (*msec % 20 == 0) {
@@ -716,6 +729,7 @@ int main(void) {
             //start calculations if buffer is filled
             if(emg_array_out_index == EMG_SIGNAL_SIZE){
                 calc_time_dom();
+                enqueue(5);           // enqueue time domain ftrs
                 calc_freq_dom();
                 mscl_activated(&mscl_act);
             } 
