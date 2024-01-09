@@ -316,6 +316,8 @@ float meanfreq;
 float medianfreq;
 float peakfrequ;
 float totalpower;
+float meanPower;
+float peakPower;
 uint8_t emg_array_out_index_init;
 
 // parameters for ble transmit
@@ -327,6 +329,9 @@ uint32_t dcd_emg_variance;
 uint32_t dcd_meanfreq;
 uint32_t dcd_emg;
 uint32_t dcd_medianfreq;
+uint32_t dcd_totalPower;
+uint32_t dcd_meanPower;
+uint32_t dcd_peakPower;
 
  FILE *dev_file;
  bool_t mscl_act;
@@ -502,13 +507,15 @@ void calc_freq_dom(void){
 
     //printf("in frequency domain:\n");
 
-    for(size_t x = 0; x < emg_array_out_index_init; x++) {
+    for(size_t x = 0; x < emg_array_out_index_init; x++){
             //printf("%f%+fi\n", creal(vector[x]), cimag(vector[x]));
     }
     meanfreq = mean(vector, emg_array_out_index_init, samplerate);
     medianfreq = median(vector, emg_array_out_index_init, samplerate);
     peakfrequ = peakfreq(vector, emg_array_out_index_init, samplerate);
     totalpower = powe(vector,emg_array_out_index_init);
+    meanPower = totalpower / EMG_SIGNAL_SIZE;
+    if(peakPower < meanPower){ peakPower = meanPower; }
 
     show_freq_dom();
 }
@@ -534,8 +541,10 @@ void ble_set_values(void){
     dcd_emg_ssi = (uint32_t)(emg_ssi / SCALE_FACTOR_EMG);
     dcd_emg_variance = (uint32_t)(emg_variance / SCALE_FACTOR_EMG);
 
-    dcd_meanfreq = (uint32_t) meanfreq;
-    dcd_medianfreq = (uint32_t) medianfreq;
+    dcd_meanfreq = (uint32_t)meanfreq;
+    dcd_medianfreq = (uint32_t)medianfreq;
+    dcd_peakPower = (uint32_t)peakPower;
+    //dcd_meanPower = (uint32_t)meanPower;
 }
 
 
@@ -570,8 +579,19 @@ void ble_update_buffer(void){
     hrm_initial_value[18] = (dcd_medianfreq >> 8) & 0xff;
     hrm_initial_value[19] = (dcd_medianfreq & 0xff);
 
-    hrm_initial_value[20] = 0;
+    // Recently added meanPower and PeakPower
+    hrm_initial_value[20] = ((dcd_meanPower >> 24) & 0xff);
+    hrm_initial_value[21] = ((dcd_meanPower >> 16) & 0xff);
+    hrm_initial_value[22] = ((dcd_meanPower >> 8) & 0xff);
+    hrm_initial_value[23] = (dcd_meanPower & 0xff);
 
+    hrm_initial_value[24] = ((dcd_peakPower >> 24) & 0xff);
+    hrm_initial_value[25] = ((dcd_peakPower >> 16) & 0xff);
+    hrm_initial_value[26] = ((dcd_peakPower >> 8) & 0xff);
+    hrm_initial_value[27] = (dcd_peakPower & 0xff);
+    // new addition ends
+
+    hrm_initial_value[20] = 0;
 }
 
 void emg_mvn_avg(float * emg_value_raw){

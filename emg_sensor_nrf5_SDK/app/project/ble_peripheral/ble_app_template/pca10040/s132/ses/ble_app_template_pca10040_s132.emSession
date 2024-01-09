@@ -13,7 +13,7 @@
   <BookmarkItem objectName="" line="436" column="-1" path="/home/ebenezer/Developer/aquatic-emg-sensor-main_x21_com/emg_sensor_nrf5_SDK/app/project/ble_peripheral/ble_app_template/main.c" number="3" extra="if (bno085_was_reset()) setReports();" color="5"/>
  </Bookmarks>
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
-  <BreakpointListItem trigger="" line="1446" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1473" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="66" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../source/flash/w25n01.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="68" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../source/flash/w25n01.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="70" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../source/flash/w25n01.c" useHWbreakpoint="false"/>
@@ -91,7 +91,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="608" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="551" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="595" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="575" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="53" useTextEdit="1" openedFrom="/home/ebenezer/Developer/aquatic-emg-sensor-main_x21ble_now_com_1/emg_sensor_nrf5_SDK/app/project/ble_peripheral/ble_app_template/main.c" useBinaryEdit="0" left="0" path="../../../source/uart.c" selected="0" top="37" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="157" useTextEdit="1" openedFrom="/home/ebenezer/Developer/aquatic-emg-sensor-main_x21ble_now_com_1/emg_sensor_nrf5_SDK/app/project/ble_peripheral/ble_app_template/source/uart.c" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/uart/app_uart.h" selected="0" top="128" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="88" useTextEdit="1" openedFrom="/home/ebenezer/Developer/aquatic-emg-sensor-main_x21ble_now_com_1/emg_sensor_nrf5_SDK/app/components/libraries/uart/app_uart.h" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/uart/app_uart.c" selected="0" top="52" codecName="Default"/>
